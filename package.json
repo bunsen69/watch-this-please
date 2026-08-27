@@ -1,0 +1,16 @@
+{
+  "name": "ebay-seo-optimizer",
+  "version": "1.0.0",
+  "description": "Lightweight desktop app for optimizing eBay listing SEO (titles, keywords, descriptions).",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "electron": "^44.0.0"
+  }
+}
