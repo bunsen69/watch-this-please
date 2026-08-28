@@ -13,9 +13,42 @@ body {
   border-bottom: 1px solid #e1e3e6;
 }
 
+.app-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .app-header h1 {
   margin: 0;
   font-size: 20px;
+}
+
+.view-nav {
+  display: flex;
+  gap: 4px;
+  background: #f4f5f7;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.view-nav-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #6b7280;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.view-nav-btn.active {
+  background: #ffffff;
+  color: #0654ba;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .subtitle {
@@ -31,6 +64,8 @@ body {
   padding: 16px;
   height: calc(100vh - 74px);
 }
+
+.layout.hidden { display: none; }
 
 .input-panel, .results-panel {
   background: #ffffff;
@@ -245,3 +280,89 @@ button.primary:hover { background: #054aa0; }
 
 .issue-list li.good { border-left-color: #067647; }
 .issue-list li.good .badge { background: #d1fadf; color: #067647; }
+
+/* Load test view */
+
+.notice {
+  font-size: 12.5px;
+  color: #374151;
+  background: #f4f5f7;
+  border: 1px solid #e1e3e6;
+  border-radius: 6px;
+  padding: 10px 12px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.field-hint {
+  text-transform: none;
+  font-weight: 400;
+  color: #9ca3af;
+  letter-spacing: 0;
+}
+
+#lt-confirm-hint {
+  color: #b54708;
+  min-height: 16px;
+}
+
+#lt-start-btn { flex: 1; margin-top: 0; }
+#lt-stop-btn { flex: 1; border-color: #b42318; color: #b42318; }
+
+.lt-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.lt-progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #f0f1f3;
+  overflow: hidden;
+}
+
+.lt-progress-fill {
+  height: 100%;
+  background: #0654ba;
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+.lt-progress-label {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.lt-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.lt-stat {
+  text-align: center;
+  padding: 10px 6px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.lt-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lt-stat-value.good { color: #067647; }
+.lt-stat-value.warn { color: #b54708; }
+.lt-stat-value.bad { color: #b42318; }
+
+.lt-stat-label {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}

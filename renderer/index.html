@@ -8,11 +8,17 @@
 </head>
 <body>
   <header class="app-header">
-    <h1>eBay Listing SEO Optimizer</h1>
-    <p class="subtitle">Improve your title, keywords, and description before you publish.</p>
+    <div class="app-header-top">
+      <h1 id="app-title">eBay Listing SEO Optimizer</h1>
+      <nav class="view-nav">
+        <button class="view-nav-btn active" data-view="seo">SEO Optimizer</button>
+        <button class="view-nav-btn" data-view="loadtest">Load Test</button>
+      </nav>
+    </div>
+    <p class="subtitle" id="app-subtitle">Improve your title, keywords, and description before you publish.</p>
   </header>
 
-  <main class="layout">
+  <main class="layout" id="view-seo">
     <section class="input-panel">
       <div class="tabs">
         <button class="tab-btn active" data-tab="link">Paste Link</button>
@@ -89,6 +95,70 @@
     </section>
   </main>
 
+  <main class="layout hidden" id="view-loadtest">
+    <section class="input-panel">
+      <p class="notice">
+        For infrastructure <strong>you own or are explicitly authorized to test</strong> — e.g.
+        checking whether your rate limiter, load balancer, or WAF actually holds up under a burst
+        of requests. eBay itself is never a valid target and is blocked outright.
+      </p>
+
+      <label for="lt-url">Target URL</label>
+      <input type="text" id="lt-url" placeholder="https://your-server.example/" />
+
+      <label for="lt-count">Number of requests <span class="field-hint" id="lt-count-max"></span></label>
+      <input type="text" inputmode="numeric" id="lt-count" value="100" />
+
+      <label for="lt-concurrency">Concurrent requests <span class="field-hint" id="lt-concurrency-max"></span></label>
+      <input type="text" inputmode="numeric" id="lt-concurrency" value="20" />
+
+      <label for="lt-timeout">Per-request timeout (ms)</label>
+      <input type="text" inputmode="numeric" id="lt-timeout" value="5000" />
+
+      <label for="lt-confirm-host">
+        Type the hostname above to confirm you own it or are authorized to test it
+      </label>
+      <input type="text" id="lt-confirm-host" placeholder="e.g. your-server.example" autocomplete="off" />
+      <p class="hint" id="lt-confirm-hint"></p>
+
+      <div class="row" style="margin-top: 16px;">
+        <button type="button" id="lt-start-btn" class="primary" disabled>Start test</button>
+        <button type="button" id="lt-stop-btn" style="display:none;">Stop</button>
+      </div>
+      <p class="status" id="lt-status"></p>
+    </section>
+
+    <section class="results-panel">
+      <div class="empty-state" id="lt-empty-state">
+        <p>Set a target and request count on the left, type the hostname to confirm you're authorized to test it, then click <strong>Start test</strong>.</p>
+      </div>
+
+      <div class="results hidden" id="lt-results">
+        <div class="score-card">
+          <h2>Progress</h2>
+          <div class="lt-progress-row">
+            <div class="lt-progress-track"><div class="lt-progress-fill" id="lt-progress-fill"></div></div>
+            <div class="lt-progress-label" id="lt-progress-label">0 / 0</div>
+          </div>
+          <div class="lt-stat-grid">
+            <div class="lt-stat"><div class="lt-stat-value good" id="lt-stat-success">0</div><div class="lt-stat-label">2xx&ndash;3xx</div></div>
+            <div class="lt-stat"><div class="lt-stat-value warn" id="lt-stat-client">0</div><div class="lt-stat-label">4xx</div></div>
+            <div class="lt-stat"><div class="lt-stat-value warn" id="lt-stat-server">0</div><div class="lt-stat-label">5xx</div></div>
+            <div class="lt-stat"><div class="lt-stat-value bad" id="lt-stat-refused">0</div><div class="lt-stat-label">Refused</div></div>
+            <div class="lt-stat"><div class="lt-stat-value bad" id="lt-stat-timeout">0</div><div class="lt-stat-label">Timed out</div></div>
+            <div class="lt-stat"><div class="lt-stat-value" id="lt-stat-latency">&mdash;</div><div class="lt-stat-label">Avg latency</div></div>
+          </div>
+        </div>
+
+        <div class="score-card">
+          <h2>What this means</h2>
+          <ul class="issue-list" id="lt-interpretation"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
   <script type="module" src="renderer.js"></script>
+  <script type="module" src="loadtest.js"></script>
 </body>
 </html>
