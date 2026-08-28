@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';" />
+  <title>eBay Listing SEO Optimizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>eBay Listing SEO Optimizer</h1>
+    <p class="subtitle">Improve your title, keywords, and description before you publish.</p>
+  </header>
+
+  <main class="layout">
+    <section class="input-panel">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="link">Paste Link</button>
+        <button class="tab-btn" data-tab="manual">Manual Entry</button>
+        <button class="tab-btn" data-tab="csv">Import CSV</button>
+      </div>
+
+      <div class="tab-panel" id="tab-link">
+        <label for="listing-url">eBay listing URL</label>
+        <div class="row">
+          <input type="text" id="listing-url" placeholder="https://www.ebay.com/itm/..." />
+          <button id="fetch-btn">Fetch</button>
+        </div>
+        <p class="hint">
+          Best-effort: eBay's page layout changes often and may block automated requests.
+          If fetching fails or looks wrong, switch to Manual Entry and paste the details yourself.
+        </p>
+        <p class="status" id="fetch-status"></p>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-csv">
+        <button id="import-csv-btn">Choose CSV file&hellip;</button>
+        <p class="hint">CSV needs a "Title" column (optional "Description" column). Any other columns are treated as item specifics.</p>
+        <p class="status" id="csv-status"></p>
+        <ul class="csv-list" id="csv-list"></ul>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-manual">
+        <p class="hint">Fill in the title, description, and item specifics directly below, then click Analyze.</p>
+      </div>
+
+      <form id="listing-form" class="listing-form">
+        <label for="title-input">Title</label>
+        <textarea id="title-input" rows="2" maxlength="200" placeholder="e.g. Nike Air Max 90 Men's Size 10 White Running Shoes New"></textarea>
+
+        <label for="description-input">Description</label>
+        <textarea id="description-input" rows="8" placeholder="Paste or write your listing description here..."></textarea>
+
+        <div class="specifics-header">
+          <label>Item Specifics</label>
+          <button type="button" id="add-specific-btn">+ Add</button>
+        </div>
+        <div id="specifics-rows"></div>
+
+        <button type="submit" id="analyze-btn" class="primary">Analyze</button>
+      </form>
+    </section>
+
+    <section class="results-panel" id="results-panel">
+      <div class="empty-state" id="empty-state">
+        <p>Load a listing, then click <strong>Analyze</strong> to see title, keyword, and description feedback here.</p>
+      </div>
+
+      <div class="results hidden" id="results">
+        <div class="score-card" id="title-score-card">
+          <h2>Title</h2>
+          <div class="score" id="title-score"></div>
+          <div class="char-count" id="title-charcount"></div>
+          <ul class="issue-list" id="title-issues"></ul>
+        </div>
+
+        <div class="score-card">
+          <h2>Keyword Suggestions</h2>
+          <ul class="issue-list" id="keyword-suggestions"></ul>
+        </div>
+
+        <div class="score-card" id="desc-score-card">
+          <h2>Description</h2>
+          <div class="score" id="desc-score"></div>
+          <div class="char-count" id="desc-wordcount"></div>
+          <ul class="issue-list" id="desc-issues"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

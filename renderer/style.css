@@ -1,0 +1,247 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f4f5f7;
+  color: #1c1e21;
+}
+
+.app-header {
+  padding: 18px 24px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #e1e3e6;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 16px;
+  padding: 16px;
+  height: calc(100vh - 74px);
+}
+
+.input-panel, .results-panel {
+  background: #ffffff;
+  border: 1px solid #e1e3e6;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e1e3e6;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: #0654ba;
+  border-bottom-color: #0654ba;
+  font-weight: 600;
+}
+
+.tab-panel.hidden { display: none; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin: 10px 0 4px;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row input { flex: 1; }
+
+button {
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+button:hover { background: #f3f4f6; }
+
+button.primary {
+  background: #0654ba;
+  border-color: #0654ba;
+  color: white;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  font-weight: 600;
+}
+
+button.primary:hover { background: #054aa0; }
+
+.hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 6px 0;
+}
+
+.status {
+  font-size: 12px;
+  min-height: 16px;
+  margin: 4px 0;
+}
+
+.status.error { color: #b42318; }
+.status.success { color: #067647; }
+
+.csv-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #e1e3e6;
+  border-radius: 6px;
+}
+
+.csv-list li {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f1f3;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.csv-list li:hover { background: #f4f5f7; }
+.csv-list li:last-child { border-bottom: none; }
+
+.specifics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.specifics-header label { margin: 0; }
+.specifics-header button { padding: 4px 8px; font-size: 12px; }
+
+.specific-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.specific-row input { flex: 1; }
+
+.specific-row .remove-btn {
+  padding: 4px 8px;
+  color: #b42318;
+}
+
+.empty-state {
+  color: #6b7280;
+  font-size: 14px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.results.hidden { display: none; }
+
+.score-card {
+  border: 1px solid #e1e3e6;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.score-card h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.score {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.score.good { color: #067647; }
+.score.ok { color: #b54708; }
+.score.bad { color: #b42318; }
+
+.char-count {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.issue-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.issue-list li {
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border-left: 3px solid #d1d5db;
+  background: #f9fafb;
+}
+
+.issue-list li .badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.issue-list li.critical { border-left-color: #b42318; }
+.issue-list li.critical .badge { background: #fee4e2; color: #b42318; }
+
+.issue-list li.warning { border-left-color: #b54708; }
+.issue-list li.warning .badge { background: #fef0c7; color: #b54708; }
+
+.issue-list li.tip { border-left-color: #0654ba; }
+.issue-list li.tip .badge { background: #e0eaff; color: #0654ba; }
+
+.issue-list li.good { border-left-color: #067647; }
+.issue-list li.good .badge { background: #d1fadf; color: #067647; }
