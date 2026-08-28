@@ -37,6 +37,24 @@ Three ways to load a listing, no eBay Developer API keys required:
   phone numbers — these can get a listing suppressed or removed), wall-of-text
   formatting, ALL CAPS, and how well title keywords are echoed in the body.
 
+## Load test
+
+A second view (switch via the nav at the top) for testing infrastructure *you
+own or are explicitly authorized to test* — e.g. checking whether your rate
+limiter, load balancer, or WAF actually holds up under a burst of requests.
+It has nothing to do with eBay listings: `ebay.com` targets are refused
+outright.
+
+Starting a run requires typing the target's hostname into a confirmation
+field (not just checking a box) so a run can't be started by accident. It
+sends up to 3,333 GET requests (concurrency and per-request timeout are
+configurable, capped at 200 concurrent) and reports how the target responded
+— successes, 4xx/5xx, connection refusals/resets, and timeouts — since those
+are the signals that actually indicate whether something is throttling or
+blocking the traffic. Every run is logged (target, parameters, and result
+counts) to `runs.log` in the app's user-data directory as a local audit
+trail.
+
 ## Running it
 
 ```bash
@@ -53,4 +71,7 @@ src/ebay/fetchListing.js    Best-effort scraper for a pasted eBay listing URL
 src/csv/parseCsv.js         Minimal CSV parser for Seller Hub-style exports
 renderer/                   UI (HTML/CSS/JS) and the local SEO analysis engine
 renderer/analysis/          Title, keyword, and description scoring logic
+src/loadtest/runner.js      Concurrency-controlled HTTP load tester (ebay.com blocked)
+src/loadtest/logRun.js      Appends each load-test run to a local audit log
+renderer/loadtest.js        Load-test view wiring, view-switcher, and confirmation gate
 ```
