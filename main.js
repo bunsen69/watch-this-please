@@ -78,6 +78,10 @@ ipcMain.on('loadtest:start', (event, config) => {
       totalRequests: config.totalRequests,
       concurrency: config.concurrency,
       timeoutMs: config.timeoutMs,
+      headerLines: config.headerLines,
+      cookie: config.cookie,
+      randomizeHeaders: config.randomizeHeaders,
+      randomizeCookies: config.randomizeCookies,
       onProgress: (progress) => event.sender.send('loadtest:progress', progress),
       onDone: (result) => {
         let logPath = null;
@@ -88,6 +92,8 @@ ipcMain.on('loadtest:start', (event, config) => {
             totalRequests: config.totalRequests,
             concurrency: config.concurrency,
             timeoutMs: config.timeoutMs,
+            randomizeHeaders: config.randomizeHeaders,
+            randomizeCookies: config.randomizeCookies,
             result
           });
         } catch (logErr) {

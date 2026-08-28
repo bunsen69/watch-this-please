@@ -55,6 +55,18 @@ blocking the traffic. Every run is logged (target, parameters, and result
 counts) to `runs.log` in the app's user-data directory as a local audit
 trail.
 
+You can set custom headers and a cookie applied to every request (e.g. an
+`Authorization` header, or a session cookie), and optionally check
+**Randomize headers** and/or **Randomize cookies** to have each request use a
+different User-Agent/Accept-Language and a fresh session-style cookie. This
+is for checking whether a rate limiter or WAF is actually keying off
+something robust like IP, or can be fooled by superficial per-request
+diversity — a standard test to run against your own defenses. It does not
+randomize or spoof IP-indicating headers (`X-Forwarded-For` and similar) —
+that specifically targets bypassing IP-based rate limiting on infrastructure
+that trusts proxy headers, a different and more sensitive technique than
+this tool is meant for.
+
 ## Running it
 
 ```bash

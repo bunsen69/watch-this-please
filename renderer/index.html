@@ -115,6 +115,26 @@
       <label for="lt-timeout">Per-request timeout (ms)</label>
       <input type="text" inputmode="numeric" id="lt-timeout" value="5000" />
 
+      <label for="lt-headers">Custom headers <span class="field-hint">(one per line, "Name: Value")</span></label>
+      <textarea id="lt-headers" rows="3" placeholder="Authorization: Bearer ...&#10;Accept: application/json"></textarea>
+
+      <label for="lt-cookie">Cookie</label>
+      <input type="text" id="lt-cookie" placeholder="session=abc123; theme=dark" />
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="lt-randomize-headers" />
+        Randomize headers (rotates User-Agent / Accept-Language per request)
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="lt-randomize-cookies" />
+        Randomize cookies (fresh session-style cookie per request)
+      </label>
+      <p class="hint">
+        Useful for checking whether your rate limiter or WAF is actually keying off something
+        robust (like IP), or can be fooled by basic client diversity. Randomized values are
+        generated per request and are not logged individually.
+      </p>
+
       <label for="lt-confirm-host">
         Type the hostname above to confirm you own it or are authorized to test it
       </label>
