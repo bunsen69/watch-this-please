@@ -53,6 +53,58 @@ const statTimeout = document.getElementById('lt-stat-timeout');
 const statLatency = document.getElementById('lt-stat-latency');
 const interpretationEl = document.getElementById('lt-interpretation');
 
+// ---- one-off generation for the Custom headers / Cookie fields ----
+// Separate from the "Randomize headers/cookies" checkboxes above, which
+// re-randomize automatically on every request during a run. These buttons
+// instead produce a single realistic set the user can inspect or edit
+// before running, using the browser's own crypto (no IPC round trip needed).
+const GEN_USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+  'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36'
+];
+const GEN_ACCEPT_LANGUAGES = ['en-US,en;q=0.9', 'en-GB,en;q=0.9', 'es-ES,es;q=0.9', 'fr-FR,fr;q=0.9', 'de-DE,de;q=0.9'];
+const GEN_ACCEPTS = [
+  'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'application/json, text/plain, */*',
+  '*/*'
+];
+const GEN_ACCEPT_ENCODINGS = ['gzip, deflate, br', 'gzip, deflate'];
+
+function genPick(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function genRandomHex(byteLength) {
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function generateHeaderLines() {
+  return [
+    `User-Agent: ${genPick(GEN_USER_AGENTS)}`,
+    `Accept: ${genPick(GEN_ACCEPTS)}`,
+    `Accept-Language: ${genPick(GEN_ACCEPT_LANGUAGES)}`,
+    `Accept-Encoding: ${genPick(GEN_ACCEPT_ENCODINGS)}`
+  ].join('\n');
+}
+
+function generateCookieString() {
+  return `session_id=${genRandomHex(16)}; visitor_id=${genRandomHex(8)}`;
+}
+
+document.getElementById('lt-generate-headers-btn').addEventListener('click', () => {
+  headersInput.value = generateHeaderLines();
+});
+
+document.getElementById('lt-generate-cookie-btn').addEventListener('click', () => {
+  cookieInput.value = generateCookieString();
+});
+
 let limits = { maxRequests: 3333, maxConcurrency: 200 };
 let running = false;
 
@@ -91,7 +143,11 @@ function setRunning(isRunning) {
   running = isRunning;
   startBtn.style.display = isRunning ? 'none' : '';
   stopBtn.style.display = isRunning ? '' : 'none';
-  [urlInput, countInput, concurrencyInput, timeoutInput, headersInput, cookieInput, randomizeHeadersInput, randomizeCookiesInput, confirmHostInput].forEach((el) => { el.disabled = isRunning; });
+  [
+    urlInput, countInput, concurrencyInput, timeoutInput, headersInput, cookieInput,
+    randomizeHeadersInput, randomizeCookiesInput, confirmHostInput,
+    document.getElementById('lt-generate-headers-btn'), document.getElementById('lt-generate-cookie-btn')
+  ].forEach((el) => { el.disabled = isRunning; });
   updateStartEnabled();
 }
 
