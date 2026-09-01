@@ -115,10 +115,16 @@
       <label for="lt-timeout">Per-request timeout (ms)</label>
       <input type="text" inputmode="numeric" id="lt-timeout" value="5000" />
 
-      <label for="lt-headers">Custom headers <span class="field-hint">(one per line, "Name: Value")</span></label>
+      <div class="specifics-header">
+        <label for="lt-headers">Custom headers <span class="field-hint">(one per line, "Name: Value")</span></label>
+        <button type="button" id="lt-generate-headers-btn">🎲 Generate</button>
+      </div>
       <textarea id="lt-headers" rows="3" placeholder="Authorization: Bearer ...&#10;Accept: application/json"></textarea>
 
-      <label for="lt-cookie">Cookie</label>
+      <div class="specifics-header">
+        <label for="lt-cookie">Cookie</label>
+        <button type="button" id="lt-generate-cookie-btn">🎲 Generate</button>
+      </div>
       <input type="text" id="lt-cookie" placeholder="session=abc123; theme=dark" />
 
       <label class="checkbox-label">
@@ -131,8 +137,11 @@
       </label>
       <p class="hint">
         Useful for checking whether your rate limiter or WAF is actually keying off something
-        robust (like IP), or can be fooled by basic client diversity. Randomized values are
-        generated per request and are not logged individually.
+        robust (like IP), or can be fooled by basic client diversity. The checkboxes above
+        re-randomize automatically on every request; the <strong>Generate</strong> buttons instead
+        fill in one realistic random header set / cookie you can inspect or edit before running,
+        used as-is for the whole test unless a checkbox above is also checked. Randomized values
+        from the checkboxes are generated per request and are not logged individually.
       </p>
 
       <label for="lt-confirm-host">

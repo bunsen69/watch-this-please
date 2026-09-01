@@ -30,6 +30,12 @@ const USER_AGENT_POOL = [
 ];
 
 const ACCEPT_LANGUAGE_POOL = ['en-US,en;q=0.9', 'en-GB,en;q=0.9', 'es-ES,es;q=0.9', 'fr-FR,fr;q=0.9', 'de-DE,de;q=0.9'];
+const ACCEPT_POOL = [
+  'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'application/json, text/plain, */*',
+  '*/*'
+];
+const ACCEPT_ENCODING_POOL = ['gzip, deflate, br', 'gzip, deflate'];
 
 function pick(pool) {
   return pool[Math.floor(Math.random() * pool.length)];
@@ -93,6 +99,8 @@ class LoadTestRunner {
     if (this.randomizeHeaders) {
       headers['User-Agent'] = pick(USER_AGENT_POOL);
       headers['Accept-Language'] = pick(ACCEPT_LANGUAGE_POOL);
+      headers['Accept'] = pick(ACCEPT_POOL);
+      headers['Accept-Encoding'] = pick(ACCEPT_ENCODING_POOL);
     }
 
     if (this.randomizeCookies) {
