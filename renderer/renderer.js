@@ -65,6 +65,7 @@ setItemSpecificsInForm({});
 const listingUrlInput = document.getElementById('listing-url');
 const fetchBtn = document.getElementById('fetch-btn');
 const fetchStatus = document.getElementById('fetch-status');
+const fetchRandomizeHeaders = document.getElementById('fetch-randomize-headers');
 
 fetchBtn.addEventListener('click', async () => {
   const url = listingUrlInput.value.trim();
@@ -78,7 +79,7 @@ fetchBtn.addEventListener('click', async () => {
   fetchStatus.textContent = 'Fetching listing...';
   fetchStatus.className = 'status';
 
-  const result = await window.api.fetchListing(url);
+  const result = await window.api.fetchListing({ url, randomizeHeaders: fetchRandomizeHeaders.checked });
 
   fetchBtn.disabled = false;
 
