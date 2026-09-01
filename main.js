@@ -13,6 +13,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'eBay Listing SEO Optimizer',
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -20,6 +21,9 @@ function createWindow() {
       sandbox: false
     }
   });
+
+  win.on('maximize', () => win.webContents.send('window:maximized-changed', true));
+  win.on('unmaximize', () => win.webContents.send('window:maximized-changed', false));
 
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 }
@@ -115,3 +119,22 @@ ipcMain.on('loadtest:stop', () => {
 });
 
 ipcMain.handle('loadtest:limits', () => ({ maxRequests: MAX_REQUESTS, maxConcurrency: MAX_CONCURRENCY }));
+
+ipcMain.on('window:minimize', (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.minimize();
+});
+
+ipcMain.on('window:toggle-maximize', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return;
+  if (win.isMaximized()) win.unmaximize();
+  else win.maximize();
+});
+
+ipcMain.on('window:close', (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.close();
+});
+
+ipcMain.handle('window:is-maximized', (event) => {
+  return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false;
+});
