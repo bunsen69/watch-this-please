@@ -3,22 +3,93 @@ const cheerio = require('cheerio');
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-// Real, unmodified browser User-Agent / Accept-Language strings — used only
-// to look like an ordinary browser request when the fixed default above gets
-// blocked, never to spoof identity or bypass anything beyond basic "no
-// User-Agent looks like a bot" filtering on a single page fetch.
-const USER_AGENT_POOL = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/128.0.0.0 Safari/537.36'
+// Each profile is a complete, internally-consistent set of real browser
+// values (UA matches its own Client Hints/Accept-Language conventions,
+// rather than mixing fields from different browsers) — a mismatched
+// combination is itself a bot signal, so keeping each set coherent matters
+// more than just varying individual header values. Used only to look like
+// an ordinary browser request when the fixed default above gets blocked,
+// never to spoof identity beyond that.
+const PROFILES = [
+  {
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.9',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+    secChUaPlatform: '"Windows"'
+  },
+  {
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.9',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+    secChUaPlatform: '"macOS"'
+  },
+  {
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.9',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+    secChUaPlatform: '"Linux"'
+  },
+  {
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/128.0.0.0 Safari/537.36',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.9',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: '"Chromium";v="128", "Not;A=Brand";v="24", "Microsoft Edge";v="128"',
+    secChUaPlatform: '"Windows"'
+  },
+  {
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.9',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: null,
+    secChUaPlatform: null
+  },
+  {
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    acceptLanguage: 'en-US,en;q=0.5',
+    acceptEncoding: 'gzip, deflate, br',
+    secChUa: null,
+    secChUaPlatform: null
+  }
 ];
-const ACCEPT_LANGUAGE_POOL = ['en-US,en;q=0.9', 'en-GB,en;q=0.9', 'en-US,en;q=0.9,es;q=0.8'];
 
-function pick(pool) {
-  return pool[Math.floor(Math.random() * pool.length)];
+const MAX_HEADER_ATTEMPTS = 3;
+
+function buildHeaders(profile) {
+  const headers = {
+    'User-Agent': profile.userAgent,
+    Accept: profile.accept,
+    'Accept-Language': profile.acceptLanguage,
+    'Accept-Encoding': profile.acceptEncoding,
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1'
+  };
+  if (profile.secChUa) {
+    headers['sec-ch-ua'] = profile.secChUa;
+    headers['sec-ch-ua-mobile'] = '?0';
+    headers['sec-ch-ua-platform'] = profile.secChUaPlatform;
+  }
+  return headers;
+}
+
+function shuffled(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 }
 
 function isLikelyEbayItemUrl(url) {
@@ -75,24 +146,7 @@ function extractItemSpecifics($) {
   return specifics;
 }
 
-async function fetchListing(rawUrl, options = {}) {
-  const url = (rawUrl || '').trim();
-  if (!url) throw new Error('Please paste an eBay listing URL.');
-  if (!isLikelyEbayItemUrl(url)) {
-    throw new Error('That does not look like an ebay.com listing URL.');
-  }
-
-  const headers = options.randomizeHeaders
-    ? {
-        'User-Agent': pick(USER_AGENT_POOL),
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': pick(ACCEPT_LANGUAGE_POOL)
-      }
-    : {
-        'User-Agent': USER_AGENT,
-        Accept: 'text/html,application/xhtml+xml'
-      };
-
+async function attemptFetch(url, headers) {
   let response;
   try {
     response = await fetch(url, { headers });
@@ -140,6 +194,29 @@ async function fetchListing(rawUrl, options = {}) {
         ? 'Could not automatically detect item specifics on this page. Add them manually if you want them included in the analysis.'
         : null
   };
+}
+
+async function fetchListing(rawUrl, options = {}) {
+  const url = (rawUrl || '').trim();
+  if (!url) throw new Error('Please paste an eBay listing URL.');
+  if (!isLikelyEbayItemUrl(url)) {
+    throw new Error('That does not look like an ebay.com listing URL.');
+  }
+
+  const headerSets = options.randomizeHeaders
+    ? shuffled(PROFILES).slice(0, MAX_HEADER_ATTEMPTS).map(buildHeaders)
+    : [{ 'User-Agent': USER_AGENT, Accept: 'text/html,application/xhtml+xml' }];
+
+  let lastError = null;
+  for (const headers of headerSets) {
+    try {
+      return await attemptFetch(url, headers);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError;
 }
 
 module.exports = { fetchListing };

@@ -35,12 +35,86 @@
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   background: var(--bg);
   color: var(--text);
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---- Custom titlebar (frameless window) ---- */
+
+.titlebar {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  height: 30px;
+  background: #0a021c;
+  border-bottom: 1px solid var(--border);
+  -webkit-app-region: drag;
+}
+
+.titlebar-drag {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.titlebar-title {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.titlebar-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 42px;
+  height: 30px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.titlebar-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  border-color: transparent;
+}
+
+.titlebar-close:hover {
+  background: var(--bad);
+  color: #fff6fb;
 }
 
 /* Subtle CRT scanline texture. Decorative only — kept faint so it never
@@ -71,6 +145,8 @@ body::after {
 
 .app-header {
   position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
   overflow: hidden;
   padding: 18px 24px 12px;
   background: linear-gradient(180deg, #0b0221 0%, #2c0e52 35%, #7a1d70 68%, #ff6fae 100%);
@@ -178,11 +254,14 @@ body::after {
 }
 
 .layout {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: 420px 1fr;
   gap: 16px;
   padding: 16px;
-  height: calc(100vh - 74px);
 }
 
 .layout.hidden { display: none; }
