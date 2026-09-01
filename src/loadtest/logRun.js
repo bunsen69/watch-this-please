@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-function logRun({ logDir, url, totalRequests, concurrency, timeoutMs, result }) {
+function logRun({ logDir, url, totalRequests, concurrency, timeoutMs, randomizeHeaders, randomizeCookies, result }) {
   fs.mkdirSync(logDir, { recursive: true });
   const logPath = path.join(logDir, 'runs.log');
 
@@ -11,6 +11,8 @@ function logRun({ logDir, url, totalRequests, concurrency, timeoutMs, result }) 
     totalRequests,
     concurrency,
     timeoutMs,
+    randomizeHeaders: Boolean(randomizeHeaders),
+    randomizeCookies: Boolean(randomizeCookies),
     sent: result.sent,
     aborted: result.aborted,
     stats: result.stats

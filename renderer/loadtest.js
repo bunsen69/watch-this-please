@@ -31,6 +31,10 @@ const urlInput = document.getElementById('lt-url');
 const countInput = document.getElementById('lt-count');
 const concurrencyInput = document.getElementById('lt-concurrency');
 const timeoutInput = document.getElementById('lt-timeout');
+const headersInput = document.getElementById('lt-headers');
+const cookieInput = document.getElementById('lt-cookie');
+const randomizeHeadersInput = document.getElementById('lt-randomize-headers');
+const randomizeCookiesInput = document.getElementById('lt-randomize-cookies');
 const confirmHostInput = document.getElementById('lt-confirm-host');
 const confirmHint = document.getElementById('lt-confirm-hint');
 const startBtn = document.getElementById('lt-start-btn');
@@ -87,7 +91,7 @@ function setRunning(isRunning) {
   running = isRunning;
   startBtn.style.display = isRunning ? 'none' : '';
   stopBtn.style.display = isRunning ? '' : 'none';
-  [urlInput, countInput, concurrencyInput, timeoutInput, confirmHostInput].forEach((el) => { el.disabled = isRunning; });
+  [urlInput, countInput, concurrencyInput, timeoutInput, headersInput, cookieInput, randomizeHeadersInput, randomizeCookiesInput, confirmHostInput].forEach((el) => { el.disabled = isRunning; });
   updateStartEnabled();
 }
 
@@ -207,7 +211,16 @@ startBtn.addEventListener('click', () => {
     setRunning(false);
   });
 
-  window.api.startLoadTest({ url, totalRequests, concurrency, timeoutMs });
+  window.api.startLoadTest({
+    url,
+    totalRequests,
+    concurrency,
+    timeoutMs,
+    headerLines: headersInput.value,
+    cookie: cookieInput.value,
+    randomizeHeaders: randomizeHeadersInput.checked,
+    randomizeCookies: randomizeCookiesInput.checked
+  });
 });
 
 stopBtn.addEventListener('click', () => {
