@@ -3,6 +3,24 @@ const cheerio = require('cheerio');
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
+// Real, unmodified browser User-Agent / Accept-Language strings — used only
+// to look like an ordinary browser request when the fixed default above gets
+// blocked, never to spoof identity or bypass anything beyond basic "no
+// User-Agent looks like a bot" filtering on a single page fetch.
+const USER_AGENT_POOL = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/128.0.0.0 Safari/537.36'
+];
+const ACCEPT_LANGUAGE_POOL = ['en-US,en;q=0.9', 'en-GB,en;q=0.9', 'en-US,en;q=0.9,es;q=0.8'];
+
+function pick(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function isLikelyEbayItemUrl(url) {
   try {
     const u = new URL(url);
@@ -57,21 +75,27 @@ function extractItemSpecifics($) {
   return specifics;
 }
 
-async function fetchListing(rawUrl) {
+async function fetchListing(rawUrl, options = {}) {
   const url = (rawUrl || '').trim();
   if (!url) throw new Error('Please paste an eBay listing URL.');
   if (!isLikelyEbayItemUrl(url)) {
     throw new Error('That does not look like an ebay.com listing URL.');
   }
 
-  let response;
-  try {
-    response = await fetch(url, {
-      headers: {
+  const headers = options.randomizeHeaders
+    ? {
+        'User-Agent': pick(USER_AGENT_POOL),
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': pick(ACCEPT_LANGUAGE_POOL)
+      }
+    : {
         'User-Agent': USER_AGENT,
         Accept: 'text/html,application/xhtml+xml'
-      }
-    });
+      };
+
+  let response;
+  try {
+    response = await fetch(url, { headers });
   } catch (err) {
     throw new Error(`Could not reach that URL (network error): ${err.message}`);
   }

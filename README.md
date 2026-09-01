@@ -16,7 +16,13 @@ Three ways to load a listing, no eBay Developer API keys required:
    The app does a best-effort scrape of the public listing page (title,
    description, item specifics). eBay's page markup changes often and can
    block automated requests, so treat this as a shortcut, not a guarantee —
-   if it fails or looks wrong, fall back to Manual Entry.
+   if it fails or looks wrong, fall back to Manual Entry. If the fetch fails
+   to connect, try the **"Use a random real browser header set"** checkbox —
+   it rotates the User-Agent/Accept/Accept-Language sent with the request
+   through a pool of real, unmodified browser values instead of the app's
+   single fixed default, which can help if that default is what's getting
+   blocked. It's still a single ordinary page fetch either way, so this
+   won't help if the block is IP-based rather than header-based.
 2. **Manual entry** — paste or type the title, description, and item
    specifics yourself. Always works.
 3. **Import CSV** — import a CSV exported from eBay Seller Hub (or your own).

@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  fetchListing: (url) => ipcRenderer.invoke('fetch-listing', url),
+  fetchListing: (payload) => ipcRenderer.invoke('fetch-listing', payload),
   importCsv: () => ipcRenderer.invoke('import-csv'),
 
   loadTestLimits: () => ipcRenderer.invoke('loadtest:limits'),

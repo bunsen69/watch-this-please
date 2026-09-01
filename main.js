@@ -37,9 +37,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.handle('fetch-listing', async (_event, url) => {
+ipcMain.handle('fetch-listing', async (_event, payload) => {
+  const { url, randomizeHeaders } = payload || {};
   try {
-    const data = await fetchListing(url);
+    const data = await fetchListing(url, { randomizeHeaders });
     return { ok: true, data };
   } catch (err) {
     return { ok: false, error: err.message };
