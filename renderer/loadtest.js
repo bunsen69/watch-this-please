@@ -1,4 +1,3 @@
-// ---- view switching (SEO Optimizer <-> Load Test) ----
 const viewNavButtons = document.querySelectorAll('.view-nav-btn');
 const views = {
   seo: document.getElementById('view-seo'),
@@ -26,7 +25,6 @@ viewNavButtons.forEach((btn) => {
   });
 });
 
-// ---- load test form ----
 const urlInput = document.getElementById('lt-url');
 const countInput = document.getElementById('lt-count');
 const concurrencyInput = document.getElementById('lt-concurrency');
@@ -53,11 +51,6 @@ const statTimeout = document.getElementById('lt-stat-timeout');
 const statLatency = document.getElementById('lt-stat-latency');
 const interpretationEl = document.getElementById('lt-interpretation');
 
-// ---- one-off generation for the Custom headers / Cookie fields ----
-// Separate from the "Randomize headers/cookies" checkboxes above, which
-// re-randomize automatically on every request during a run. These buttons
-// instead produce a single realistic set the user can inspect or edit
-// before running, using the browser's own crypto (no IPC round trip needed).
 const GEN_USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',

@@ -3,13 +3,6 @@ const cheerio = require('cheerio');
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-// Each profile is a complete, internally-consistent set of real browser
-// values (UA matches its own Client Hints/Accept-Language conventions,
-// rather than mixing fields from different browsers) — a mismatched
-// combination is itself a bot signal, so keeping each set coherent matters
-// more than just varying individual header values. Used only to look like
-// an ordinary browser request when the fixed default above gets blocked,
-// never to spoof identity beyond that.
 const PROFILES = [
   {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',

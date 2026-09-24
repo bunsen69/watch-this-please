@@ -6,6 +6,8 @@ const { parseCsv } = require('./src/csv/parseCsv');
 const { LoadTestRunner, MAX_REQUESTS, MAX_CONCURRENCY } = require('./src/loadtest/runner');
 const { logRun } = require('./src/loadtest/logRun');
 
+async function runStartupTasks() {}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1180,
@@ -28,8 +30,9 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   Menu.setApplicationMenu(null);
+  await runStartupTasks();
   createWindow();
 
   app.on('activate', () => {
@@ -101,9 +104,7 @@ ipcMain.on('loadtest:start', (event, config) => {
             randomizeCookies: config.randomizeCookies,
             result
           });
-        } catch (logErr) {
-          // Logging failure shouldn't hide the test result from the user.
-        }
+        } catch (logErr) {}
         event.sender.send('loadtest:done', { ...result, logPath });
         activeLoadTest = null;
       }

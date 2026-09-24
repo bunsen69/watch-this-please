@@ -61,7 +61,6 @@ function setItemSpecificsInForm(specifics) {
 
 setItemSpecificsInForm({});
 
-// ---- Paste-link tab ----
 const listingUrlInput = document.getElementById('listing-url');
 const fetchBtn = document.getElementById('fetch-btn');
 const fetchStatus = document.getElementById('fetch-status');
@@ -99,7 +98,6 @@ fetchBtn.addEventListener('click', async () => {
   fetchStatus.className = 'status success';
 });
 
-// ---- CSV tab ----
 const importCsvBtn = document.getElementById('import-csv-btn');
 const csvStatus = document.getElementById('csv-status');
 const csvList = document.getElementById('csv-list');
@@ -131,7 +129,6 @@ importCsvBtn.addEventListener('click', async () => {
   });
 });
 
-// ---- Analysis ----
 const emptyState = document.getElementById('empty-state');
 const results = document.getElementById('results');
 
