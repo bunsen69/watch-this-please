@@ -14,8 +14,6 @@ export const CONDITION_WORDS = [
   'sealed', 'nwt', 'nib', 'vintage', 'brand new'
 ];
 
-// Small heuristic synonym dictionary — not live search-volume data,
-// just common alternate terms buyers search for on eBay.
 export const SYNONYM_HINTS = [
   { match: /\bsneakers?\b/i, suggest: ['shoes', 'trainers'] },
   { match: /\bphone case\b/i, suggest: ['cover', 'protector'] },

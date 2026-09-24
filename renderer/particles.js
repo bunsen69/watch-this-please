@@ -1,6 +1,3 @@
-// Ambient floating particles behind the panels — purely decorative, so it
-// skips entirely under prefers-reduced-motion rather than drawing a static
-// frame.
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

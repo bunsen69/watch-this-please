@@ -5,19 +5,12 @@ const crypto = require('crypto');
 const MAX_REQUESTS = 3333;
 const MAX_CONCURRENCY = 200;
 
-// Targets that are never allowed, regardless of confirmation: eBay itself
-// (this tool ships inside an eBay listing app and must never be pointed at
-// eBay's own infrastructure) and the cloud metadata endpoint (a common SSRF
-// target, never a legitimate load-test target).
 function isBlockedHost(hostname) {
   if (/(^|\.)ebay\.[a-z.]+$/i.test(hostname)) return true;
   if (hostname === '169.254.169.254') return true;
   return false;
 }
 
-// Headers that influence which client made a request are deliberately not
-// randomizable here — this pool only covers User-Agent/Accept-Language, for
-// simulating traffic diversity, never IP-indicating headers.
 const USER_AGENT_POOL = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
@@ -45,9 +38,6 @@ function randomCookieValue() {
   return crypto.randomBytes(16).toString('hex');
 }
 
-// Parses simple "Name: Value" per-line header text into an object. Blank
-// lines and lines without a colon are ignored rather than rejected, since
-// this is typed by hand in the UI.
 function parseHeaderLines(text) {
   const headers = {};
   (text || '').split('\n').forEach((line) => {

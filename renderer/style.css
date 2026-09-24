@@ -57,8 +57,6 @@ body {
   pointer-events: none;
 }
 
-/* ---- Custom titlebar (frameless window) ---- */
-
 .titlebar {
   position: relative;
   z-index: 2;
@@ -117,8 +115,6 @@ body {
   color: #fff6fb;
 }
 
-/* Subtle CRT scanline texture. Decorative only — kept faint so it never
-   competes with legibility of the actual tool. */
 body::after {
   content: "";
   position: fixed;
@@ -141,8 +137,6 @@ body::after {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-soft); }
 
-/* ---- Header: a contained synthwave sunset scene ---- */
-
 .app-header {
   position: relative;
   z-index: 1;
@@ -161,7 +155,6 @@ body::after {
 }
 
 .app-header::before {
-  /* glowing sun, low over the horizon */
   content: "";
   position: absolute;
   right: 48px;
@@ -175,7 +168,6 @@ body::after {
 }
 
 .app-header::after {
-  /* scrolling grid floor along the bottom edge */
   content: "";
   position: absolute;
   left: 0;
@@ -513,8 +505,6 @@ button.primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; a
 .issue-list li.good { border-left-color: var(--good); }
 .issue-list li.good .badge { background: var(--good-soft); color: var(--good); }
 
-/* Load test view */
-
 .notice {
   font-size: 12.5px;
   color: var(--text);
@@ -620,3 +610,39 @@ button.primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; a
   margin-top: 2px;
   accent-color: var(--accent);
 }
+
+.advanced-fields {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: var(--surface-2);
+}
+
+.advanced-fields[open] {
+  padding-bottom: 10px;
+}
+
+.advanced-fields summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 9px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.advanced-fields summary::-webkit-details-marker { display: none; }
+
+.advanced-fields summary::before {
+  content: "▸ ";
+  color: var(--accent-2);
+}
+
+.advanced-fields[open] summary::before {
+  content: "▾ ";
+}
+
+.advanced-fields summary:hover { color: var(--accent-2); }
